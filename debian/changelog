@@ -1,0 +1,5 @@
+odroid-alsa (0.1) unstable; urgency=medium
+
+  * Initial ALSA installation package, currently for ODROID-N2 only
+
+ -- Dongjin Kim <tobetter@gmail.com>  Thu, 30 Apr 2020 02:47:53 +0900

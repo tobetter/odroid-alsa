@@ -1,0 +1,12 @@
+Source: odroid-alsa
+Section: admin
+Priority: standard
+Maintainer: Dongjin Kim <tobetter@gmail.com>
+Build-Depends: debhelper, po-debconf
+Vcs-Git: https://github.com/tobetter/odroid-alsa.git
+Vcs-Browser: https://github.com/tobetter/odroid-alsa.git
+
+Package: odroid-alsa
+Architecture: arm64
+Depends: alsa-utils
+Description: ODROID ALSA configuration package
