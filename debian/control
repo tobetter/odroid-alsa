@@ -8,5 +8,5 @@ Vcs-Browser: https://github.com/tobetter/odroid-alsa.git
 
 Package: odroid-alsa
 Architecture: arm64
-Depends: alsa-utils
+Depends: libasound2-data, alsa-utils
 Description: ODROID ALSA configuration package
