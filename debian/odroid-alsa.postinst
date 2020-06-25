@@ -20,6 +20,10 @@ case "$(odroid_model_simple)" in
 		amixer sset 'TOACODEC Lane Select' '0' || true
 		amixer sset 'ACODEC' '255'
 
+		amixer sset 'FRDDR_C SINK 1 SEL' 'OUT 3' || true
+		amixer sset 'FRDDR_C SRC 1 EN' 'on' || true
+		amixer sset 'SPDIFOUT SRC SEL' 'IN 2' || true
+
 		alsactl store
 		;;
 
