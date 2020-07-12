@@ -13,6 +13,8 @@ case "$(odroid_model_simple)" in
 		amixer sset 'TOHDMITX' 'on' || true
 		alsactl store
 		;;
+	odroidn2_plus)
+		;;
 
 	odroidc4)
 		amixer sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
