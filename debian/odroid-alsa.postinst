@@ -5,7 +5,7 @@ set -e
 . /usr/lib/odroid-base/library.sh
 
 case "$(odroid_model_simple)" in
-	odroidn2)
+	odroidn2 | odroidn2_plus)
 		amixer sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
 		amixer sset 'FRDDR_A SRC 1 EN' 'on' || true
 		amixer sset 'TDMOUT_B SRC SEL' 'IN 0' || true
