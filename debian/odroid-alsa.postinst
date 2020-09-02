@@ -1,5 +1,8 @@
 #!/bin/sh
 
+major=$(uname -r | cut -d'.' -f1)
+[ "x$major" = "x4" ] && exit 0
+
 set -e
 
 . /usr/lib/odroid-base/library.sh
