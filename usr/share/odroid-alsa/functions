@@ -2,61 +2,89 @@
 
 set -e
 
+ODROID_PA_CONFIG="/etc/pulse/default.pa.d/odroid-alsa.pa"
+
 . /usr/share/odroid-base/library.sh
 
+sound_card_model() {
+	if [ -f /proc/device-tree/sound/model 2>/dev/null ]; then
+		echo $(cat /proc/device-tree/sound/model | tr -d '\0')
+	fi
+}
+
+sound_card_driver() {
+	local uevent_file="/sys/class/sound/card${1:-0}/device/uevent"
+
+	[ -f "$uevent_file" ] && \
+		cat "$uevent_file" | grep DRIVER | cut -d'=' -f2
+}
+
+sound_card_id() {
+	local uevent_file="/sys/class/sound/card${1:-0}/id"
+	[ -f "$uevent_file" ] && cat "$uevent_file"
+}
+
+sound_card_of_node() {
+	of_node="/sys/class/sound/card${1}/device/of_node/${2}"
+	[ -f "$of_node" ] && cat ${of_node} | tr -d '\0'
+}
+
 alsa_setup() {
+	local card_id=$(sound_card_id)
+	[ -n "${card_id}" ] && option="-c ${card_id}"
+
 	case "$(odroid_model_simple)" in
 		odroidn2 | odroidn2_plus)
 			major=$(uname -r | cut -d'.' -f1)
 			[ "x$major" = "x4" ] && return
 
-			amixer -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
-			amixer -q sset 'FRDDR_A SRC 1 EN' 'on' || true
-			amixer -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
-			amixer -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
-			amixer -q sset 'TOHDMITX' 'on' || true
+			amixer ${option} -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
+			amixer ${option} -q sset 'FRDDR_A SRC 1 EN' 'on' || true
+			amixer ${option} -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
+			amixer ${option} -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
+			amixer ${option} -q sset 'TOHDMITX' 'on' || true
 
-			amixer -q sset 'FRDDR_B SINK 1 SEL' 'OUT 2' || true
-			amixer -q sset 'FRDDR_B SRC 1 EN' 'on' || true
-			amixer -q sset 'TDMOUT_C SRC SEL' 'IN 1' || true
-			amixer -q sset 'TOACODEC SRC' 'I2S C' || true
-			amixer -q sset 'TOACODEC OUT EN' 'on' || true
-			amixer -q sset 'TOACODEC Lane Select' '0' || true
-			amixer -q sset 'ACODEC' '255'
+			amixer ${option} -q sset 'FRDDR_B SINK 1 SEL' 'OUT 2' || true
+			amixer ${option} -q sset 'FRDDR_B SRC 1 EN' 'on' || true
+			amixer ${option} -q sset 'TDMOUT_C SRC SEL' 'IN 1' || true
+			amixer ${option} -q sset 'TOACODEC SRC' 'I2S C' || true
+			amixer ${option} -q sset 'TOACODEC OUT EN' 'on' || true
+			amixer ${option} -q sset 'TOACODEC Lane Select' '0' || true
+			amixer ${option} -q sset 'ACODEC' '255'
 
-			amixer -q sset 'FRDDR_C SINK 1 SEL' 'OUT 3' || true
-			amixer -q sset 'FRDDR_C SRC 1 EN' 'on' || true
-			amixer -q sset 'SPDIFOUT SRC SEL' 'IN 2' || true
+			amixer ${option} -q sset 'FRDDR_C SINK 1 SEL' 'OUT 3' || true
+			amixer ${option} -q sset 'FRDDR_C SRC 1 EN' 'on' || true
+			amixer ${option} -q sset 'SPDIFOUT SRC SEL' 'IN 2' || true
 			;;
 
 		odroidn2l)
 			major=$(uname -r | cut -d'.' -f1)
 			[ "x$major" = "x4" ] && return
 
-			amixer -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
-			amixer -q sset 'FRDDR_A SRC 1 EN' 'on' || true
-			amixer -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
-			amixer -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
-			amixer -q sset 'TOHDMITX' 'on' || true
+			amixer ${option} -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
+			amixer ${option} -q sset 'FRDDR_A SRC 1 EN' 'on' || true
+			amixer ${option} -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
+			amixer ${option} -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
+			amixer ${option} -q sset 'TOHDMITX' 'on' || true
 
-			amixer -q sset 'FRDDR_B SINK 1 SEL' 'OUT 2' || true
-			amixer -q sset 'FRDDR_B SRC 1 EN' 'on' || true
-			amixer -q sset 'TDMOUT_C SRC SEL' 'IN 1' || true
-			amixer -q sset 'TOACODEC SRC' 'I2S C' || true
-			amixer -q sset 'TOACODEC OUT EN' 'on' || true
-			amixer -q sset 'TOACODEC Lane Select' '0' || true
-			amixer -q sset 'ACODEC' '255'
+			amixer ${option} -q sset 'FRDDR_B SINK 1 SEL' 'OUT 2' || true
+			amixer ${option} -q sset 'FRDDR_B SRC 1 EN' 'on' || true
+			amixer ${option} -q sset 'TDMOUT_C SRC SEL' 'IN 1' || true
+			amixer ${option} -q sset 'TOACODEC SRC' 'I2S C' || true
+			amixer ${option} -q sset 'TOACODEC OUT EN' 'on' || true
+			amixer ${option} -q sset 'TOACODEC Lane Select' '0' || true
+			amixer ${option} -q sset 'ACODEC' '255'
 			;;
 
 		odroidc4 | odroidhc4)
 			major=$(uname -r | cut -d'.' -f1)
 			[ "x$major" = "x4" ] && return
 
-			amixer -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
-			amixer -q sset 'FRDDR_A SRC 1 EN' 'on' || true
-			amixer -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
-			amixer -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
-			amixer -q sset 'TOHDMITX' 'on' || true
+			amixer ${option} -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
+			amixer ${option} -q sset 'FRDDR_A SRC 1 EN' 'on' || true
+			amixer ${option} -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
+			amixer ${option} -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
+			amixer ${option} -q sset 'TOHDMITX' 'on' || true
 			;;
 
 		odroidc5)
@@ -107,5 +135,73 @@ __EOF
 	if [ -f /usr/share/pulseaudio/alsa-mixer/paths/hdmi-output-0.conf ]; then
 		sed -i "s/^priority =.*/priority = 100/g" \
 			/usr/share/pulseaudio/alsa-mixer/paths/hdmi-output-0.conf
+	fi
+}
+
+alsa_ucm_link() {
+	mkdir -p $(dirname "${2}")
+	ln -sf "${1}" "${2}"
+}
+
+alsa_ucm_by_card() {
+	local cardid=$(sound_card_id ${1})	# ODROIDN2
+	local driver=$(sound_card_driver ${1})	# axg-sound-card
+
+	case "${cardid}" in
+		rockchiphdmi* | rockchiprk809*)
+			case "${cardid}" in
+				rockchiphdmi*)		conf="hdmi-sound";;
+				rockchiprk809*)		conf="rk809-sound";;
+			esac
+
+			local confd_dir="/usr/share/alsa/ucm2/${cardid}"
+			local conf_file="/usr/share/alsa/ucm2/Rockchip/${conf}/${conf}.conf"
+
+			alsa_ucm_link "${conf_file}" "${confd_dir}/${cardid}.conf"
+
+			case "${driver}" in
+				asoc-simple-card)	driver="simple-card";;
+				rk-hdmi-sound)		driver="rockchip-hdmi";;
+			esac
+
+			local dt_name=$(sound_card_of_node ${1} "simple-audio-card,name")
+			confd_dir="/usr/share/alsa/ucm2/conf.d"
+
+			alsa_ucm_link "${conf_file}" "${confd_dir}/${driver}/${dt_name}.conf"
+			alsa_ucm_link "${conf_file}" "${confd_dir}/${dt_name}/${dt_name}.conf"
+			;;
+
+		ODROID*)
+			local model=$(sound_card_of_node ${1} "model")
+			local confd_dir="/usr/share/alsa/ucm2/${cardid}"
+			local conf_file="/usr/share/alsa/ucm2/Hardkernel/${model}/${model}.conf"
+
+			alsa_ucm_link "${conf_file}" "${confd_dir}/${cardid}.conf"
+
+			confd_dir="/usr/share/alsa/ucm2/conf.d/${driver}"
+
+			alsa_ucm_link "${conf_file}" "${confd_dir}/${model}.conf"
+			;;
+		*)
+			echo "Unknown Sound Card [${cardid}]."
+			return
+	esac
+
+	if which alsaucm > /dev/null 2>&1; then
+		alsaucm -c "${cardid}" reload || true
+	fi
+}
+
+alsa_ucm_setup() {
+	for n in $(awk '/^ [0-9]/ {print $1}' /proc/asound/cards); do
+		alsa_ucm_by_card "${n}"
+	done
+
+	local user_id=$(loginctl list-users --no-legend | awk '{print $1}' | head -n 1)
+
+	if [ -n "$user_id" ]; then
+		systemctl --user -M "${user_id}@" restart wireplumber || pkill -x wireplumber || true
+	else
+		pkill -x wireplumber || true
 	fi
 }

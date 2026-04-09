@@ -1,3 +1,4 @@
 etc/asound.conf
 usr/share/alsa/cards/*
+usr/share/alsa/ucm2
 usr/share/odroid-alsa

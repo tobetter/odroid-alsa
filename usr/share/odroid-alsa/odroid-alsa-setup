@@ -1,7 +1,5 @@
 #!/bin/sh
 
-ODROID_PA_CONFIG="/etc/pulse/default.pa.d/odroid-alsa.pa"
-
 . /usr/share/odroid-alsa/functions
 
 case "$(odroid_model_simple)"  in
@@ -14,4 +12,5 @@ __EOF
 esac
 
 alsa_setup
+alsa_ucm_setup
 pulseaudio_setup

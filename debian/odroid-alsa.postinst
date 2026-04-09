@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. /usr/share/odroid-alsa/functions
+
+ODROID_ALSA_SETUP="/usr/share/odroid-alsa/odroid-alsa-setup"
+
+if [ -x "${ODROID_ALSA_SETUP}" ]; then
+	/bin/sh "${ODROID_ALSA_SETUP}" || true
+fi
+
+exit 0
