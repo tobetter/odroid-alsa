@@ -27,8 +27,6 @@ alsa_setup() {
 			amixer -q sset 'FRDDR_C SINK 1 SEL' 'OUT 3' || true
 			amixer -q sset 'FRDDR_C SRC 1 EN' 'on' || true
 			amixer -q sset 'SPDIFOUT SRC SEL' 'IN 2' || true
-
-			alsactl store
 			;;
 
 		odroidn2l)
@@ -48,8 +46,6 @@ alsa_setup() {
 			amixer -q sset 'TOACODEC OUT EN' 'on' || true
 			amixer -q sset 'TOACODEC Lane Select' '0' || true
 			amixer -q sset 'ACODEC' '255'
-
-			alsactl store
 			;;
 
 		odroidc4 | odroidhc4)
@@ -61,7 +57,6 @@ alsa_setup() {
 			amixer -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
 			amixer -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
 			amixer -q sset 'TOHDMITX' 'on' || true
-			alsactl store
 			;;
 
 		odroidc5)
@@ -70,7 +65,6 @@ alsa_setup() {
 
 			amixer -q sset 'HDMITX Audio Source Select' 'Tdm_B' || true
 			amixer -q sset 'AMP DAC Digital' '254' || true
-			alsactl store
 			;;
 		*)
 			;;
