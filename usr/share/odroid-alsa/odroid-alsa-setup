@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ODROID_PA_CONFIG="/etc/pulse/default.pa.d/odroid-alsa.pa"
+
 . /usr/share/odroid-alsa/functions
 
 case "$(odroid_model_simple)"  in
@@ -12,36 +14,4 @@ __EOF
 esac
 
 alsa_setup
-
-if [ ! -f /etc/pulse/default.pa.d/odroid-alsa.pa ]; then
-	case "$(odroid_model_simple)"  in
-		odroidc5)
-			cat>/etc/pulse/default.pa.d/odroid-alsa.pa<<__EOF
-load-module module-alsa-sink device=hw:0,1 sink_name=spdif2hdmi sink_properties=device.description=HDMI-SPDIF
-load-module module-alsa-sink device=hw:0,2 sink_name=line sink_properties=device.description=Line-out
-load-module module-alsa-sink device=hw:0,3 sink_name=spdif sink_properties=device.description=SPDIF-out
-set-default-sink alsa_output.platform-auge_sound.stereo-fallback
-__EOF
-			;;
-		odroidm1 | odroidm1s)
-			cat>/etc/pulse/default.pa.d/odroid-alsa.pa<<__EOF
-set-card-profile 0 output:hdmi-stereo
-set-default-sink alsa_output.platform-hdmi-sound.hdmi-stereo
-__EOF
-			;;
-		odroidm2)
-			cat>/etc/pulse/default.pa.d/odroid-alsa.pa<<__EOF
-set-card-profile 0 output:hdmi-stereo
-set-default-sink alsa_output.platform-hdmi0-sound.hdmi-stereo
-__EOF
-			;;
-		*)
-			cat>/etc/pulse/default.pa.d/odroid-alsa.pa<<__EOF
-set-card-profile 0 output:hdmi-stereo
-__EOF
-			;;
-	esac
-
-	sed -i "s/^priority =.*/priority = 100/g" \
-		/usr/share/pulseaudio/alsa-mixer/paths/hdmi-output-0.conf
-fi
+pulseaudio_setup

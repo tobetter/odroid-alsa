@@ -76,3 +76,42 @@ alsa_setup() {
 			;;
 	esac
 }
+
+pulseaudio_setup() {
+	[ -f "${ODROID_PA_CONFIG}" ] && return
+
+	mkdir -p "$(dirname ${ODROID_PA_CONFIG})"
+
+	case "$(odroid_model_simple)" in
+		odroidc5)
+			cat>"${ODROID_PA_CONFIG}"<<__EOF
+			load-module module-alsa-sink device=hw:0,1 sink_name=spdif2hdmi sink_properties=device.description=HDMI-SPDIF
+			load-module module-alsa-sink device=hw:0,2 sink_name=line sink_properties=device.description=Line-out
+			load-module module-alsa-sink device=hw:0,3 sink_name=spdif sink_properties=device.description=SPDIF-out
+			set-default-sink alsa_output.platform-auge_sound.stereo-fallback
+__EOF
+			;;
+		odroidm1 | odroidm1s)
+			cat>"${ODROID_PA_CONFIG}"<<__EOF
+			set-card-profile 0 output:hdmi-stereo
+			set-default-sink alsa_output.platform-hdmi-sound.hdmi-stereo
+__EOF
+			;;
+		odroidm2)
+			cat>"${ODROID_PA_CONFIG}"<<__EOF
+			set-card-profile 0 output:hdmi-stereo
+			set-default-sink alsa_output.platform-hdmi0-sound.hdmi-stereo
+__EOF
+			;;
+		*)
+			cat>"${ODROID_PA_CONFIG}"<<__EOF
+			set-card-profile 0 output:hdmi-stereo
+__EOF
+			;;
+	esac
+
+	if [ -f /usr/share/pulseaudio/alsa-mixer/paths/hdmi-output-0.conf ]; then
+		sed -i "s/^priority =.*/priority = 100/g" \
+			/usr/share/pulseaudio/alsa-mixer/paths/hdmi-output-0.conf
+	fi
+}
