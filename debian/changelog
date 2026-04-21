@@ -1,3 +1,9 @@
+odroid-alsa (26.04) stable; urgency=medium
+
+  * split into a standalone repository from odroid-base
+
+ -- Dongjin <tobetter@gmail.com>  Tue, 21 Apr 2026 21:00:18 +0900
+
 odroid-alsa (0.1) unstable; urgency=medium
 
   * Initial ALSA installation package, currently for ODROID-N2 only
