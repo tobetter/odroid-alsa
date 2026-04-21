@@ -1,0 +1,78 @@
+#!/bin/sh
+
+set -e
+
+. /usr/share/odroid-base/library.sh
+
+alsa_setup() {
+	case "$(odroid_model_simple)" in
+		odroidn2 | odroidn2_plus)
+			major=$(uname -r | cut -d'.' -f1)
+			[ "x$major" = "x4" ] && return
+
+			amixer -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
+			amixer -q sset 'FRDDR_A SRC 1 EN' 'on' || true
+			amixer -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
+			amixer -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
+			amixer -q sset 'TOHDMITX' 'on' || true
+
+			amixer -q sset 'FRDDR_B SINK 1 SEL' 'OUT 2' || true
+			amixer -q sset 'FRDDR_B SRC 1 EN' 'on' || true
+			amixer -q sset 'TDMOUT_C SRC SEL' 'IN 1' || true
+			amixer -q sset 'TOACODEC SRC' 'I2S C' || true
+			amixer -q sset 'TOACODEC OUT EN' 'on' || true
+			amixer -q sset 'TOACODEC Lane Select' '0' || true
+			amixer -q sset 'ACODEC' '255'
+
+			amixer -q sset 'FRDDR_C SINK 1 SEL' 'OUT 3' || true
+			amixer -q sset 'FRDDR_C SRC 1 EN' 'on' || true
+			amixer -q sset 'SPDIFOUT SRC SEL' 'IN 2' || true
+
+			alsactl store
+			;;
+
+		odroidn2l)
+			major=$(uname -r | cut -d'.' -f1)
+			[ "x$major" = "x4" ] && return
+
+			amixer -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
+			amixer -q sset 'FRDDR_A SRC 1 EN' 'on' || true
+			amixer -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
+			amixer -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
+			amixer -q sset 'TOHDMITX' 'on' || true
+
+			amixer -q sset 'FRDDR_B SINK 1 SEL' 'OUT 2' || true
+			amixer -q sset 'FRDDR_B SRC 1 EN' 'on' || true
+			amixer -q sset 'TDMOUT_C SRC SEL' 'IN 1' || true
+			amixer -q sset 'TOACODEC SRC' 'I2S C' || true
+			amixer -q sset 'TOACODEC OUT EN' 'on' || true
+			amixer -q sset 'TOACODEC Lane Select' '0' || true
+			amixer -q sset 'ACODEC' '255'
+
+			alsactl store
+			;;
+
+		odroidc4 | odroidhc4)
+			major=$(uname -r | cut -d'.' -f1)
+			[ "x$major" = "x4" ] && return
+
+			amixer -q sset 'FRDDR_A SINK 1 SEL' 'OUT 1' || true
+			amixer -q sset 'FRDDR_A SRC 1 EN' 'on' || true
+			amixer -q sset 'TDMOUT_B SRC SEL' 'IN 0' || true
+			amixer -q sset 'TOHDMITX I2S SRC' 'I2S B' || true
+			amixer -q sset 'TOHDMITX' 'on' || true
+			alsactl store
+			;;
+
+		odroidc5)
+			major=$(uname -r | cut -d'.' -f1)
+			[ "x$major" = "x4" ] && return
+
+			amixer -q sset 'HDMITX Audio Source Select' 'Tdm_B' || true
+			amixer -q sset 'AMP DAC Digital' '254' || true
+			alsactl store
+			;;
+		*)
+			;;
+	esac
+}

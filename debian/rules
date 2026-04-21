@@ -2,3 +2,7 @@
 
 %:
 	dh $@
+
+
+override_dh_installsystemd:
+	dh_installsystemd -podroid-alsa odroid-alsa.service

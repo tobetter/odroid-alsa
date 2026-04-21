@@ -1,0 +1,9 @@
+[Unit]
+Description=ODROID ALSA Setup Service
+
+[Service]
+Type=simple
+ExecStart=/usr/share/odroid-alsa/odroid-alsa-setup
+
+[Install]
+WantedBy=multi-user.target
