@@ -91,8 +91,8 @@ alsa_setup() {
 			major=$(uname -r | cut -d'.' -f1)
 			[ "x$major" = "x4" ] && return
 
-			amixer -q sset 'HDMITX Audio Source Select' 'Tdm_B' || true
-			amixer -q sset 'AMP DAC Digital' '254' || true
+			amixer ${option} -q sset 'HDMITX Audio Source Select' 'Tdm_B' || true
+			amixer ${option} -q sset 'AMP DAC Digital' '254' || true
 			;;
 		*)
 			;;
@@ -173,6 +173,19 @@ alsa_ucm_by_card() {
 
 		ODROID*)
 			local model=$(sound_card_of_node ${1} "model")
+			local confd_dir="/usr/share/alsa/ucm2/${cardid}"
+			local conf_file="/usr/share/alsa/ucm2/Hardkernel/${model}/${model}.conf"
+
+			alsa_ucm_link "${conf_file}" "${confd_dir}/${cardid}.conf"
+
+			confd_dir="/usr/share/alsa/ucm2/conf.d/${driver}"
+
+			alsa_ucm_link "${conf_file}" "${confd_dir}/${model}.conf"
+			;;
+
+		AMLAUGESOUND)
+#			local model=$(sound_card_of_node ${1} "model")
+			local model="ODROID-C5"
 			local confd_dir="/usr/share/alsa/ucm2/${cardid}"
 			local conf_file="/usr/share/alsa/ucm2/Hardkernel/${model}/${model}.conf"
 
